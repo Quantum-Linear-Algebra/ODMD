@@ -7,6 +7,7 @@ Output: estimated energy $\tilde{E_0}$
 $k \leftarrow 0$
 
 **while**  $\tilde{E_0}$ not converged **do**
+
     $s_k \leftarrow Rs(k\Delta t), 0 \le k \le K+1$
     $o_{t_k,d} \leftarrow$ 
     $$
@@ -24,6 +25,7 @@ $k \leftarrow 0$
         \dots \\
         o_{t_{k_2},d}
     \end{bmatrix} $$
+
     $\textbf{X}, \textbf{X}' \in \mathbb{C}^{d\times(K+1)}, d = \lfloor\alpha(K+1)\rfloor$
     $\textbf{X} \leftarrow \textbf{X}_{0,K} = \sum_{l=0}^{d-1} \sigma_l\textbf{u}_l\textbf{v}_l^\dagger$ (SVD)
     $\textbf{X}' \leftarrow \textbf{X}_{1,K+1}$
