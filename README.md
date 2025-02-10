@@ -8,15 +8,15 @@ $$k \leftarrow 0$$
 
 **while**  $$\tilde{E_0}$$ not converged **do**
     $$s_k \leftarrow Rs(k\Delta t), 0 \le k \le K+1$$
-    $$o_{t_k,d} \leftarrow \begin{bmatrix} s_0\\ s_1\\ \vdots \\ s_k \end{bmatrix}$$
-    $$\textbf{X}_{k_1:k_2} \leftarrow \begin{bmatrix} o_{t_{k_1},d}\\ o_{t_{k_1+1},d}\\ \dots \\ o_{t_{k_2},d} \end{bmatrix}$$
+    $$o_{t_k,d} \leftarrow \left[\begin{array} s_0\\ s_1\\ \vdots \\ s_k \end{array}\right]$$
+    $$\textbf{X}_{k_1:k_2} \leftarrow \left[\begin{array} o_{t_{k_1},d}\\ o_{t_{k_1+1},d}\\ \dots \\ o_{t_{k_2},d} \end{array}\right]$$
     $$\textbf{X}, \textbf{X}' \in \mathbb{C}^{d\times(K+1)}, d = \lfloor\alpha(K+1)\rfloor$$
     $$\textbf{X} \leftarrow \textbf{X}_{0,K} = \sum_{l=0}^{d-1} \sigma_l\textbf{u}_l\textbf{v}_l^\dagger$$ (SVD)
     $$\textbf{X}' \leftarrow \textbf{X}_{1,K+1}$$
     $$\textbf{X}_\tilde{\delta} \leftarrow \sum_{l:\sigma_l>\tilde{\delta}\sigma_{\text{max}}} \sigma_l\textbf{u}_l\textbf{v}_l^\dagger, \sigma_{\text{max}} = \max_l\sigma_l$$
     $$A \leftarrow \textbf{X}'\left(\textbf{X}_\tilde{\delta} \right)^+$$ (pseudoinverse)
-    Solve for $$\tilde{\lambda}$$ using $$A\textbf{\psi}_l = \tilde{\lambda}_l\textbf{\psi}_l$$
-    $$\tilde{E}_0\Delta t \leftarrow - \max_{1\le l \le d_kk} ???? \log\left(\tilde{\lambda}_l\right)$$
+    Solve for $$\tilde{\lambda}$$ using $$A\textbf{\Psi}_l = \tilde{\lambda}_l\textbf{\Psi}_l$$
+    $$\tilde{E}_0\Delta t \leftarrow - \max_{1\le l \le d_kk} I \log\left(\tilde{\lambda}_l\right)$$
     $$k \leftarrow k+1$$
 
 Todo:
