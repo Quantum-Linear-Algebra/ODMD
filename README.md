@@ -6,11 +6,9 @@ Output: estimated energy $\tilde{E}_0$
 
 $k \leftarrow 0$
 
-**while**  $\tilde{E_0}$ not converged **do**
-
+**while**  $\tilde{E_0}$ not converged **do**d
     $s_k \leftarrow Rs(k\Delta t), 0 \le k \le K+1$
     $o_{t_k,d} \leftarrow$ 
-
     <math display="block">
     \begin{bmatrix} 
     s_0 \\
