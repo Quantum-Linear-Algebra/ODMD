@@ -8,8 +8,8 @@ $k \leftarrow 0$
 
 **while**  $\tilde{E_0}$ not converged **do**
     $s_k \leftarrow Rs(k\Delta t), 0 \le k \le K+1$
+    $o_{t_k,d} \leftarrow$ 
     $$
-    o_{t_k,d} \leftarrow 
     \begin{bmatrix}
         s_0 \\
         s_1 \\
