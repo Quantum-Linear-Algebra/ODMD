@@ -2,7 +2,7 @@ This repository will contain all the code to run observable dynamic mode decompo
 
 General Algorithm Overview
 Input: time step $\Delta t$, noise threshold $\tilde{\delta}$
-Output: estimated energy $\tilde{E_0}$
+Output: estimated energy $\tilde{E}_0$
 
 $k \leftarrow 0$
 
@@ -10,6 +10,15 @@ $k \leftarrow 0$
 
     $s_k \leftarrow Rs(k\Delta t), 0 \le k \le K+1$
     $o_{t_k,d} \leftarrow$ 
+
+    <math display="block">
+    \begin{bmatrix} 
+    s_0 \\
+    s_1 \\
+    \vdots \\
+    s_k
+    \end{bmatrix}
+    </math> 
     $$
     \begin{bmatrix}
         s_0 \\
