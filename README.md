@@ -8,16 +8,8 @@ $k \leftarrow 0$
 
 **while**  $\tilde{E_0}$ not converged **do** \
     $s_k \leftarrow Rs(k\Delta t), 0 \le k \le K+1$\
-    $o_{t_k,d} \leftarrow$\
-    +$s_0$   + (this is a matrix)\
-    |$s_1$   | \
-    |$\vdots$| \
-    +$s_k$   + \
-    $\textbf{X}_{k_1:k_2} \leftarrow$\
-    +o_{t_{k_1},d}  +\
-    |o_{t_{k_1+1},d}|\
-    |\dots          |\
-    +o_{t_{k_2},d}  +\
+    $o_{t_k,d} \leftarrow \left[s_0~~s_1~~\cdots~~s_k\right]^T$\
+    $\textbf{X}_{k_1:k_2} \leftarrow \left[o_{t_{k_1},d}~~o_{t_{k_1+1},d}~~\cdots~~o_{t_{k_2},d}\left]$\
     $\textbf{X}, \textbf{X}' \in \mathbb{C}^{d\times(K+1)}, d = \lfloor\alpha(K+1)\rfloor$\
     $\textbf{X} \leftarrow \textbf{X}_{0,K} = \sum_{l=0}^{d-1} \sigma_l\textbf{u}_l\textbf{v}_l^\dagger$ (SVD)\
     $\textbf{X}' \leftarrow \textbf{X}_{1,K+1}$
