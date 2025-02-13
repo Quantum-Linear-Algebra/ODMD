@@ -9,7 +9,7 @@ $k \leftarrow 0$
 **while**  $\tilde{E_0}$ not converged **do**
 > $s_k \leftarrow Re(s(k\Delta t)), 0 \le k \le K+1$
 >
-> $o_{t_k,d} \leftarrow \left[s_0  s_1  \cdots  s_k\right]^T$
+> $o_{t_k,d} \leftarrow \left[s_k  s_{k+1}  \cdots  s_{k+d-1}\right]^T$
 >
 > $X_{k_1:k_2} \leftarrow \left[o_{t_{k_1},d}  o_{t_{k_1+1},d}  \cdots  o_{t_{k_2},d}\right]$
 > 
