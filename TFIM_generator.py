@@ -8,7 +8,6 @@ def generate_TFIM_gates(qubits, steps, dt, g, location):
         os.mkdir("TFIM_Operators")
     
     with open("TFIM_Operators/Operator_Generator.ini", 'w+') as f:
-        print("workedx")
         f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
         f.write("[Trotter]\nsteps = "+str(steps)+"\ndt = "+str(dt)+"\n\n")
         f.write("[Jy]\nvalue = 0\n\n")
