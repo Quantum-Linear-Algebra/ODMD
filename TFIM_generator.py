@@ -9,19 +9,19 @@ def generate_TFIM_gates(qubits, steps, dt, g, location):
     if not os.path.exists("TFIM_Operators"):
         os.mkdir("TFIM_Operators")
     
-    steps = steps - 1     
-    with open("TFIM_Operators/Operator_Generator.ini", 'w+') as f:
-        f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
-        f.write("[Trotter]\nsteps = 1\ndt = 0\n\n")
-        f.write("[Jy]\nvalue = 0\n\n")
-        f.write("[Jz]\nvalue = 1\n\n")
-        f.write("[hx]\nramp = constant\nvalue = "+str(g)+"\n\n")
-        f.write("[Output]\nname = TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt=0_i=\nimin = 1\nimax = 2\nstep = 1\n")
-    subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"])
-    os.remove("TFIM_Operators/Operator_Generator.ini")
-    qc = QuantumCircuit.from_qasm_file("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt=0_i=1.qasm")
-    gates.append(qc.to_gate(label = "TFIM 1").control())
-    os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt=0_i=1.qasm")
+    # steps = steps - 1     
+    # with open("TFIM_Operators/Operator_Generator.ini", 'w+') as f:
+    #     f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
+    #     f.write("[Trotter]\nsteps = 1\ndt = 0\n\n")
+    #     f.write("[Jy]\nvalue = 0\n\n")
+    #     f.write("[Jz]\nvalue = 1\n\n")
+    #     f.write("[hx]\nramp = constant\nvalue = "+str(g)+"\n\n")
+    #     f.write("[Output]\nname = TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt=0_i=\nimin = 1\nimax = 2\nstep = 1\n")
+    # subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"])
+    # os.remove("TFIM_Operators/Operator_Generator.ini")
+    # qc = QuantumCircuit.from_qasm_file("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt=0_i=1.qasm")
+    # gates.append(qc.to_gate(label = "TFIM 1").control())
+    # os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt=0_i=1.qasm")
 
     with open("TFIM_Operators/Operator_Generator.ini", 'w+') as f:
         f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
