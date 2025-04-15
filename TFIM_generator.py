@@ -1,10 +1,12 @@
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Pauli
 import subprocess, os, numpy as np
+from scipy.linalg import eigh 
 
 def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
-    gates = []
+    
+    # calculate new scaled parameters
     H = np.zeros((2**qubits, 2**qubits), dtype=np.complex128)
     for i in range(qubits-1):
         temp = Pauli('')
@@ -22,11 +24,12 @@ def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
             else:
                 temp ^= Pauli('I')
         H += -g*temp.to_matrix()
-    norm = np.linalg.norm(H, ord=2)
-    coupling = scaling/norm
-    g /= scaling/norm
+    n = 2**qubits
+    largest_eig = np.abs(eigh(H, eigvals_only=True, subset_by_index=[n-1,n-1])[0])
+    coupling = scaling/largest_eig
+    g *= scaling/largest_eig
 
-
+    gates = []
     if not os.path.exists("TFIM_Operators"):
         os.mkdir("TFIM_Operators")
     
