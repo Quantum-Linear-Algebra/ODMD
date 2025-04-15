@@ -1,11 +1,32 @@
 from qiskit import QuantumCircuit
-import subprocess
-import os
+from qiskit.quantum_info import Pauli
+import subprocess, os, numpy as np
 
-def generate_TFIM_gates(qubits, steps, dt, g, location):
+def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
     gates = []
-    
+    H = np.zeros((2**qubits, 2**qubits), dtype=np.complex128)
+    for i in range(qubits-1):
+        temp = Pauli('')
+        for j in range(qubits):
+            if (j == i or j == i+1):
+                temp ^= Pauli('Z')
+            else:
+                temp ^= Pauli('I')
+        H += -temp.to_matrix()
+    for i in range(qubits):
+        temp = Pauli('')
+        for j in range(qubits):
+            if (j == i):
+                temp ^= Pauli('X')
+            else:
+                temp ^= Pauli('I')
+        H += -g*temp.to_matrix()
+    norm = np.linalg.norm(H, ord=2)
+    coupling = scaling/norm
+    g /= scaling/norm
+
+
     if not os.path.exists("TFIM_Operators"):
         os.mkdir("TFIM_Operators")
     
@@ -14,7 +35,7 @@ def generate_TFIM_gates(qubits, steps, dt, g, location):
         f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
         f.write("[Trotter]\nsteps = 1\ndt = 0\n\n") # maybe need new number for steps
         f.write("[Jy]\nvalue = 0\n\n")
-        f.write("[Jz]\nvalue = 1\n\n")
+        f.write("[Jz]\nvalue = "+str(coupling)+"\n\n")
         f.write("[hx]\nramp = constant\nvalue = "+str(g)+"\n\n")
         f.write("[Output]\nname = TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=\nimin = 1\nimax = 2\nstep = 1\n")
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
@@ -30,7 +51,7 @@ def generate_TFIM_gates(qubits, steps, dt, g, location):
         f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
         f.write("[Trotter]\nsteps = "+str(steps)+"\ndt = "+str(dt)+"\n\n") # maybe need new number for steps
         f.write("[Jy]\nvalue = 0\n\n")
-        f.write("[Jz]\nvalue = 1\n\n")
+        f.write("[Jz]\nvalue = "+str(coupling)+"\n\n")
         f.write("[hx]\nramp = constant\nvalue = "+str(g)+"\n\n")
         f.write("[Output]\nname = TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=\nimin = 1\nimax = "+str(steps+1)+"\nstep = 1\n")
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
@@ -43,40 +64,3 @@ def generate_TFIM_gates(qubits, steps, dt, g, location):
         os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i="+str(step+1)+".qasm")
     os.rmdir("TFIM_Operators")
     return gates
-
-
-# from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
-# from qiskit.circuit.library import QFT
-# from qiskit_aer import AerSimulator
-# from numpy import pi
-
-# particles  = 2
-# bits       = 1
-# qr_ancilla = QuantumRegister(bits)
-# qr_eigen   = QuantumRegister(particles)
-# cr         = ClassicalRegister(bits)
-# Dt         = 1
-# shots      = 100
-# g          = 1
-# gates      = generate_TFIM_gates(particles, 2*int(2*pi/Dt)+1, Dt, g, '../f3cpp')
-
-# for controlled_U in gates:
-#     qc = QuantumCircuit(qr_ancilla, qr_eigen, cr)
-#     qc.h(qr_ancilla)
-#     qc.h(qr_eigen)
-#     qc.barrier()
-
-#     for i in range(len(qr_ancilla)):
-#         for _ in range(2**(i)):
-#             qc.append(controlled_U, qargs=[qr_ancilla[i]]+qr_eigen[:] )
-#     qc.append(QFT(bits, inverse = True), qr_ancilla)
-#     for i in range(len(qr_ancilla)): qc.measure(qr_ancilla[i], cr[i])
-#     # print(qc)
-#     aer_sim = AerSimulator()
-#     trans_qc = transpile(qc, aer_sim)
-#     counts = aer_sim.run(trans_qc, shots = shots).result().get_counts()
-#     p0 = 0
-#     if counts.get('0') is not None:
-#         p0 = counts['0']/shots
-#     meas = 2*p0-1
-#     print(meas)
