@@ -3,7 +3,7 @@ from qiskit.quantum_info import Pauli
 import subprocess, os, numpy as np
 from scipy.linalg import eigh 
 
-def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
+def generate_TFIM_gates(qubits, steps, dt, g, scaling, coupling, location, trotter = 1):
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
     
     # calculate new scaled parameters
@@ -26,7 +26,7 @@ def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
         H += -g*temp.to_matrix()
     n = 2**qubits
     largest_eig = np.abs(eigh(H, eigvals_only=True, subset_by_index=[n-1,n-1])[0])
-    coupling = scaling/largest_eig
+    coupling *= scaling/largest_eig
     g *= scaling/largest_eig
 
     gates = []
@@ -45,11 +45,13 @@ def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
     subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"])
     os.remove("TFIM_Operators/Operator_Generator.ini")
     qc = QuantumCircuit.from_qasm_file("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=1.qasm")
-    gate = qc.to_gate(label = "TFIM 0").control()
+    gate = qc.to_gate(label = "TFIM 0").reorder_bits(reversed(range(qubits))).control()
     gates.append(gate)
     os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=1.qasm")
-    steps=steps-1
+    steps -= 1
 
+    steps *= trotter
+    dt    /= trotter
     with open("TFIM_Operators/Operator_Generator.ini", 'w+') as f:
         f.write("[Qubits]\nnumber = "+str(qubits)+"\n\n")
         f.write("[Trotter]\nsteps = "+str(steps)+"\ndt = "+str(dt)+"\n\n") # maybe need new number for steps
@@ -60,10 +62,11 @@ def generate_TFIM_gates(qubits, steps, dt, g, scaling, location):
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
     subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"])
     os.remove("TFIM_Operators/Operator_Generator.ini")
-    for step in range(steps):
-        qc = QuantumCircuit.from_qasm_file("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i="+str(step+1)+".qasm")
-        gate = qc.to_gate(label = "TFIM "+str(step+1)).control()
-        gates.append(gate)
-        os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i="+str(step+1)+".qasm")
+    for step in range(1, steps+1):
+        if step % trotter == 0:
+            qc = QuantumCircuit.from_qasm_file("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i="+str(step)+".qasm")
+            gate = qc.to_gate(label = "TFIM "+str(step)).control()
+            gates.append(gate)
+        os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i="+str(step)+".qasm")
     os.rmdir("TFIM_Operators")
     return gates
