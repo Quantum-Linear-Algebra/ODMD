@@ -3,7 +3,7 @@ from qiskit.quantum_info import Pauli
 import subprocess, os, numpy as np
 from scipy.linalg import eigh 
 
-def generate_TFIM_gates(qubits, steps, dt, g, scaling, coupling, location, trotter = 1):
+def generate_TFIM_gates(qubits, steps, dt, g, scaling, coupling, trotter, location):
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
     
     # calculate new scaled parameters
@@ -42,10 +42,12 @@ def generate_TFIM_gates(qubits, steps, dt, g, scaling, coupling, location, trott
         f.write("[hx]\nramp = constant\nvalue = "+str(g)+"\n\n")
         f.write("[Output]\nname = TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=\nimin = 1\nimax = 2\nstep = 1\n")
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
-    subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"])
+    with open("TFIM_Operators/garbage.txt", "w") as file:
+        subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"], stdout=file)
+    os.remove("TFIM_Operators/garbage.txt")
     os.remove("TFIM_Operators/Operator_Generator.ini")
     qc = QuantumCircuit.from_qasm_file("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=1.qasm")
-    gate = qc.to_gate(label = "TFIM 0").reorder_bits(reversed(range(qubits))).control()
+    gate = qc.to_gate(label = "TFIM 0").control()
     gates.append(gate)
     os.remove("TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=1.qasm")
     steps -= 1
@@ -60,7 +62,9 @@ def generate_TFIM_gates(qubits, steps, dt, g, scaling, coupling, location, trott
         f.write("[hx]\nramp = constant\nvalue = "+str(g)+"\n\n")
         f.write("[Output]\nname = TFIM_Operators/n="+str(qubits)+"_g="+str(g)+"_dt="+str(dt)+"_i=\nimin = 1\nimax = "+str(steps+1)+"\nstep = 1\n")
     exe = location+"/release/examples/f3c_time_evolution_TFYZ"
-    subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"])
+    with open("TFIM_Operators/garbage.txt", "w") as file:
+        subprocess.run([exe, "TFIM_Operators/Operator_Generator.ini"], stdout=file)
+    os.remove("TFIM_Operators/garbage.txt")
     os.remove("TFIM_Operators/Operator_Generator.ini")
     for step in range(1, steps+1):
         if step % trotter == 0:
