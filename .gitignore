@@ -1,2 +1,4 @@
 __pycache__/TFIM_generator.cpython-311.pyc
 .vscode/settings.json
+Transpiled_Circuits/comp=H_sys=H_2_n=1_dist=0.5_scale=2.356194490192345_shift=0_overlap=0.75_Dt=0.05_maxitr=10000_Im.qpy
+Transpiled_Circuits/comp=H_sys=H_2_n=1_dist=0.5_scale=2.356194490192345_shift=0_overlap=0.75_Dt=0.05_maxitr=10000_Re.qpy
